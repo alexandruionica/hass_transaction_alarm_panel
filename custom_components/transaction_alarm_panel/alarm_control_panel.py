@@ -5,12 +5,7 @@ import json
 import logging
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
-from homeassistant.components.alarm_control_panel.const import (
-    SUPPORT_ALARM_ARM_AWAY,
-    SUPPORT_ALARM_ARM_HOME,
-    SUPPORT_ALARM_ARM_NIGHT,
-    SUPPORT_ALARM_TRIGGER,
-)
+from homeassistant.components.alarm_control_panel import AlarmControlPanelEntityFeature
 import homeassistant.components.manual.alarm_control_panel as manual
 
 from homeassistant.components import mqtt
@@ -22,6 +17,7 @@ from homeassistant.const import (
     CONF_DELAY_TIME,
     CONF_ARMING_TIME,
     CONF_TRIGGER_TIME,
+    CONF_UNIQUE_ID,
 
     STATE_ALARM_DISARMED,
     STATE_ALARM_ARMED_AWAY,
@@ -118,6 +114,7 @@ class AlarmPanel(manual.ManualAlarm):
         super().__init__(
             hass,
             config[CONF_NAME],
+            config.get(CONF_UNIQUE_ID),
             config.get(CONF_CODE),
             config.get(manual.CONF_CODE_TEMPLATE),
             config.get(manual.CONF_CODE_ARM_REQUIRED),
@@ -205,7 +202,7 @@ class AlarmPanel(manual.ManualAlarm):
 
     @property
     def supported_features(self):
-        return SUPPORT_ALARM_ARM_AWAY | SUPPORT_ALARM_ARM_HOME | SUPPORT_ALARM_ARM_NIGHT | SUPPORT_ALARM_TRIGGER
+        return AlarmControlPanelEntityFeature.ARM_AWAY | AlarmControlPanelEntityFeature.ARM_HOME | AlarmControlPanelEntityFeature.ARM_NIGHT | AlarmControlPanelEntityFeature.TRIGGER
 
     async def async_added_to_hass(self):
         await super().async_added_to_hass()
